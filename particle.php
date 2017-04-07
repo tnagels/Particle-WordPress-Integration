@@ -14,6 +14,8 @@ License: Commercial
 add_action( 'admin_menu', 'particle_add_admin_menu' );
 add_action( 'admin_init', 'particle_settings_init' );
 
+$allowed_status = array('name','connected_string','status','error','last_heard_string','last_ip_address');
+
 // Include the required files. You will need to rename phpParticle.config.sample.php to phpParticle.config.php and then set the values within to use this example
 if((@include 'api/phpParticle.class.php') === false)  die("Unable to load phpParticle class");
 
@@ -22,6 +24,32 @@ function particle_add_admin_menu(  ) {
 	add_menu_page( 'Particle', 'Particle', 'manage_options', 'particle', 'particle_options_page' );
 
 }
+
+function particle_shortcode( $params ) {
+	global $allowed_status;
+	particle_update_status ();
+	$status = get_option( 'particle_status');
+
+	if (array_key_exists ('status', $params )) {
+		if (array_key_exists ($params['status'], $status)) {
+			if (in_array($params['status'], $allowed_status)){
+				return $status[$params['status']];
+			}
+			return '(status not allowed)';
+		}
+		return '(unknown status)';
+	}
+
+	if (array_key_exists ('variable', $params )) {
+		if (array_key_exists ($params['variable'], $status['variables'])) {
+			return $status['variables'][$params['variable']];
+		}
+		return '(unknown variable)';
+	}
+
+  return '(unknown parameter)';
+}
+add_shortcode( 'particle', 'particle_shortcode' );
 
 
 function particle_settings_init(  ) {
@@ -101,6 +129,7 @@ function particle_settings_section_callback(  ) {
 
 
 function particle_options_page(  ) {
+	global $allowed_status;
 	particle_update_status();
 	?>
 	<div class="wrap">
@@ -133,12 +162,13 @@ function particle_options_page(  ) {
 				</tr>
 			</tfoot>
 			<tbody>
-				<tr><td>Name</th><td>	<?= $status['name'] ?> </td><td>status='name'</td></tr>
-				<tr><td>Connected</th><td> <?= ($status['connected']=='1') ? 'true' : 'false' ?> </td><td>status='connected'</td></tr>
-				<tr><td>Status</th><td> <?= $status['status'] ?> </td><td>status='status'</td></tr>
-				<tr><td>Error</th><td> <?= $status['error'] ?> </td><td>status='error'</td></tr>
-				<tr><td>Last heard</th><td> <?=  date('Y-m-d H:i:s e', $status['last_heard']); ?> </td><td>status='last_heard'</td></tr>
-				<tr><td>Last IP</th><td> <?= $status['last_ip_address'] ?> </td><td>status='last_ip_address'</td></tr>
+				<?php
+					foreach ($allowed_status as $allowed) {
+				?>
+				<tr><td><?= $allowed ?></th><td>	<?= $status[$allowed] ?> </td><td>status='<?= $allowed ?>'</td></tr>
+				<?php
+					}
+				?>
 			</tbody>
 		</table>
 		<h2>Variables</h2>
@@ -178,14 +208,14 @@ function particle_options_page(  ) {
 			<thead>
 				<tr>
 					<th><?php _e('Name', 'wordpress'); ?></th>
-					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th>&nbsp;</th>
 					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
 					<th><?php _e('Name', 'wordpress'); ?></th>
-					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th>&nbsp;</th>
 					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
 				</tr>
 			</tfoot>
@@ -226,6 +256,9 @@ function particle_update_status () {
 			$status = $particle->getResult();
 			$status['last_heard'] = strtotime($status['last_heard']);
 			$status['error'] = "none";
+			if ($status['connected']=='1') $status['connected_string'] = 'true';
+			 else $status['connected_string'] = 'false';
+			$status['last_heard_string'] = date('Y-m-d H:i:s e', $status['last_heard']);
 			foreach ($status['variables'] as $variable => $value) {
 				if($particle->getVariable($options['particle_device_id'], $variable) == true)
 				{
@@ -245,5 +278,23 @@ function particle_update_status () {
 		$status['connected'] = '';
 	}
 	update_option('particle_status', $status);
+}
+
+particle_call_function ($function, $value) {
+	$options = get_option( 'particle_settings' );
+	$status = get_option( 'particle_status');
+	if ($options['particle_enable'] == '1') {
+		$particle = new phpParticle();
+		$particle->setDebug(false);
+		$particle->setAccessToken($options['particle_token']);
+		if($particle->callFunction($options['particle_device_id'], $function, $value) == true) {
+			$result = $particle->getResult();
+			rerturn $result;
+		}
+		else
+		{
+			$status['error'] = $particle->getError();
+		}
+	}
 }
 ?>
