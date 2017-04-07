@@ -116,21 +116,100 @@ function particle_options_page(  ) {
 	?>
 		</form>
 		<h2>Device Status</h2>
-		<p>Current status of the device. Only updated on page reloads!</p>
-		<table class="form-table">
+		<p>Current status of the device.</p>
+		<table class="wp-list-table widefat fixed posts">
+			<thead>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</tfoot>
 			<tbody>
-				<tr><th scope="row">Name</th><td>	<?= $status['name'] ?> </td></tr>
-				<tr><th scope="row">Connected</th><td> <?= ($status['connected']=='1') ? 'True' : 'False' ?> </td></tr>
-				<tr><th scope="row">Error</th><td> <?= $status['error'] ?> </td></tr>
-				<tr><th scope="row">Last heard</th><td> <?= $status['last_heard'] ?> </td></tr>
-				<tr><th scope="row">Last IP</th><td> <?= $status['last_ip_address'] ?> </td></tr>
+				<tr><td>Name</th><td>	<?= $status['name'] ?> </td><td>status='name'</td></tr>
+				<tr><td>Connected</th><td> <?= ($status['connected']=='1') ? 'true' : 'false' ?> </td><td>status='connected'</td></tr>
+				<tr><td>Status</th><td> <?= $status['status'] ?> </td><td>status='status'</td></tr>
+				<tr><td>Error</th><td> <?= $status['error'] ?> </td><td>status='error'</td></tr>
+				<tr><td>Last heard</th><td> <?=  date('Y-m-d H:i:s e', $status['last_heard']); ?> </td><td>status='last_heard'</td></tr>
+				<tr><td>Last IP</th><td> <?= $status['last_ip_address'] ?> </td><td>status='last_ip_address'</td></tr>
 			</tbody>
 		</table>
-
+		<h2>Variables</h2>
+		<p>Known Cloud Variables defined in the device.</p>
+		<table class="wp-list-table widefat fixed posts">
+			<thead>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</tfoot>
+			<tbody>
+				<?php
+					foreach ($status['variables'] as $variable => $value) {
+				?>
+				<tr>
+					<td><?= $variable ?></td>
+					<td><?= $value ?></td>
+					<td>variable='<?= $variable ?>'</td>
+				</tr>
+				<?php
+					}
+				?>
+		</tbody>
+		</table>
+		<h2>Functions</h2>
+		<p>Known Cloud Functions defined in the device.</p>
+		<table class="wp-list-table widefat fixed posts">
+			<thead>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th><?php _e('Name', 'wordpress'); ?></th>
+					<th><?php _e('Value', 'wordpress'); ?></th>
+					<th><?php _e('Shortcode Parameter', 'wordpress'); ?></th>
+				</tr>
+			</tfoot>
+			<tbody>
+				<?php
+					foreach ($status['functions'] as $key => $function) {
+				?>
+				<tr>
+					<td><?= $function ?></td>
+					<th>&nbsp;</th>
+					<td>function='<?= $function ?>' value = '(value)'</td>
+				</tr>
+				<?php
+					}
+				?>
+		</tbody>
+		</table>
 	</div>
 	<?php
+	//print_r($status);
 
 }
+
+// Particle communication functions
 
 function particle_update_status () {
 	static $firstrun;
@@ -145,7 +224,19 @@ function particle_update_status () {
 		if($particle->getAttributes($options['particle_device_id']) == true)
 		{
 			$status = $particle->getResult();
-			$status['error'] = "None";
+			$status['last_heard'] = strtotime($status['last_heard']);
+			$status['error'] = "none";
+			foreach ($status['variables'] as $variable => $value) {
+				if($particle->getVariable($options['particle_device_id'], $variable) == true)
+				{
+						$result = $particle->getResult();
+				    $status['variables'][$variable] = $result['result'];
+				}
+				else
+				{
+					$status['error'] = $particle->getError();
+				}
+			}
 		} else {
 				$status['connected'] = '';
 				$status['error'] = $particle->getError();
@@ -155,26 +246,4 @@ function particle_update_status () {
 	}
 	update_option('particle_status', $status);
 }
-
-/**function particle_show_status (  ) {
-	$options = get_option( 'particle_settings' );
-	$status =
-	$particle = new phpParticle();
-	$particle->setDebug(false);
-	$particle->setAccessToken($options['particle_token']);
-	if($particle->getAttributes($options['particle_device_id']) == true)
-	{
-	    $status = $particle->getResult();
-			set_op
-			?>
-			<?php
-			print_r($data);
-	}
-	else
-	{
-	    echo("Error: " . $particle->getError());
-	    echo("Error Source" . $particle->getErrorSource());
-	}
-} **/
-
 ?>
