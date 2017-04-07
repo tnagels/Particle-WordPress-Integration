@@ -279,7 +279,7 @@ function particle_update_status () {
 	}
 	update_option('particle_status', $status);
 }
-
+/*
 particle_call_function ($function, $value) {
 	$options = get_option( 'particle_settings' );
 	$status = get_option( 'particle_status');
@@ -289,12 +289,12 @@ particle_call_function ($function, $value) {
 		$particle->setAccessToken($options['particle_token']);
 		if($particle->callFunction($options['particle_device_id'], $function, $value) == true) {
 			$result = $particle->getResult();
-			rerturn $result;
+			return $result;
 		}
 		else
 		{
 			$status['error'] = $particle->getError();
 		}
 	}
-}
+}*/
 ?>
