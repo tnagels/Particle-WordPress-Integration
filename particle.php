@@ -11,14 +11,13 @@ License: Commercial
 
 // Admin Menu & Page
 
-<?php
 add_action( 'admin_menu', 'particle_add_admin_menu' );
 add_action( 'admin_init', 'particle_settings_init' );
 
 
 function particle_add_admin_menu(  ) {
 
-	add_menu_page( 'particle', 'particle', 'manage_options', 'particle', 'particle_options_page' );
+	add_menu_page( 'Particle', 'Particle', 'manage_options', 'particle', 'particle_options_page' );
 
 }
 
@@ -28,47 +27,65 @@ function particle_settings_init(  ) {
 	register_setting( 'pluginPage', 'particle_settings' );
 
 	add_settings_section(
-		'particle_pluginPage_section',
-		__( 'Your section description', 'wordpress' ),
+		'particle_pluginPage_device_section',
+		__( 'Device settings', 'wordpress' ),
 		'particle_settings_section_callback',
 		'pluginPage'
 	);
 
 	add_settings_field(
-		'particle_checkbox_field_0',
-		__( 'Settings field description', 'wordpress' ),
-		'particle_checkbox_field_0_render',
+		'particle_token',
+		__( 'API token', 'wordpress' ),
+		'particle_token_render',
 		'pluginPage',
-		'particle_pluginPage_section'
+		'particle_pluginPage_device_section'
 	);
 
 	add_settings_field(
-		'particle_text_field_1',
-		__( 'Settings field description', 'wordpress' ),
-		'particle_text_field_1_render',
+		'particle_device_id',
+		__( 'Device ID', 'wordpress' ),
+		'particle_device_id_render',
 		'pluginPage',
-		'particle_pluginPage_section'
+		'particle_pluginPage_device_section'
+	);
+
+	add_settings_field(
+		'particle_enable',
+		__( 'Enable device', 'wordpress' ),
+		'particle_enable_render',
+		'pluginPage',
+		'particle_pluginPage_device_section'
 	);
 
 
 }
 
 
-function particle_checkbox_field_0_render(  ) {
+function particle_token_render(  ) {
 
 	$options = get_option( 'particle_settings' );
 	?>
-	<input type='checkbox' name='particle_settings[particle_checkbox_field_0]' <?php checked( $options['particle_checkbox_field_0'], 1 ); ?> value='1'>
+	<input type='text' name='particle_settings[particle_token]' value='<?php echo $options['particle_token']; ?>'>
 	<?php
 
 }
 
 
-function particle_text_field_1_render(  ) {
+function particle_device_id_render(  ) {
 
 	$options = get_option( 'particle_settings' );
 	?>
-	<input type='text' name='particle_settings[particle_text_field_1]' value='<?php echo $options['particle_text_field_1']; ?>'>
+	<input type='text' name='particle_settings[particle_device_id]' value='<?php echo $options['particle_device_id']; ?>'>
+	<?php
+
+}
+
+
+function particle_enable_render(  ) {
+
+	$options = get_option( 'particle_settings' );
+	?>
+	<input type='checkbox' name='particle_settings[particle_enable]' <?php checked( $options['particle_enable'], 1 ); ?> value='1'>
 	<?php
 
 }
@@ -76,7 +93,7 @@ function particle_text_field_1_render(  ) {
 
 function particle_settings_section_callback(  ) {
 
-	echo __( 'This section description', 'wordpress' );
+	echo __( 'Settings for the Particle API and the device', 'wordpress' );
 
 }
 
@@ -84,17 +101,17 @@ function particle_settings_section_callback(  ) {
 function particle_options_page(  ) {
 
 	?>
-	<form action='options.php' method='post'>
+	<div class="wrap">
+		<h1>Particle</h1>
 
-		<h2>particle</h2>
-
+		<form action='options.php' method='post'>
 		<?php
 		settings_fields( 'pluginPage' );
 		do_settings_sections( 'pluginPage' );
 		submit_button();
 		?>
-
-	</form>
+		</form>
+	</div>
 	<?php
 
 }
