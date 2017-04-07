@@ -14,6 +14,8 @@ License: Commercial
 add_action( 'admin_menu', 'particle_add_admin_menu' );
 add_action( 'admin_init', 'particle_settings_init' );
 
+// Include the required files. You will need to rename phpParticle.config.sample.php to phpParticle.config.php and then set the values within to use this example
+if((@include 'api/phpParticle.class.php') === false)  die("Unable to load phpParticle class");
 
 function particle_add_admin_menu(  ) {
 
@@ -93,27 +95,86 @@ function particle_enable_render(  ) {
 
 function particle_settings_section_callback(  ) {
 
-	echo __( 'Settings for the Particle API and the device', 'wordpress' );
+	echo __( 'Settings for the Particle API and the device.', 'wordpress' );
 
 }
 
 
 function particle_options_page(  ) {
-
+	particle_update_status();
 	?>
 	<div class="wrap">
 		<h1>Particle</h1>
 
 		<form action='options.php' method='post'>
-		<?php
-		settings_fields( 'pluginPage' );
-		do_settings_sections( 'pluginPage' );
-		submit_button();
-		?>
+	<?php
+	settings_fields( 'pluginPage' );
+	do_settings_sections( 'pluginPage' );
+	submit_button();
+	particle_update_status();
+	$status = get_option( 'particle_status');
+	?>
 		</form>
+		<h2>Device Status</h2>
+		<p>Current status of the device. Only updated on page reloads!</p>
+		<table class="form-table">
+			<tbody>
+				<tr><th scope="row">Name</th><td>	<?= $status['name'] ?> </td></tr>
+				<tr><th scope="row">Connected</th><td> <?= ($status['connected']=='1') ? 'True' : 'False' ?> </td></tr>
+				<tr><th scope="row">Error</th><td> <?= $status['error'] ?> </td></tr>
+				<tr><th scope="row">Last heard</th><td> <?= $status['last_heard'] ?> </td></tr>
+				<tr><th scope="row">Last IP</th><td> <?= $status['last_ip_address'] ?> </td></tr>
+			</tbody>
+		</table>
+
 	</div>
 	<?php
 
 }
+
+function particle_update_status () {
+	static $firstrun;
+	if ($firstrun !== null) return;
+	$firstrun = 1;
+	$options = get_option( 'particle_settings' );
+	$status = get_option( 'particle_status');
+	if ($options['particle_enable'] == '1') {
+		$particle = new phpParticle();
+		$particle->setDebug(false);
+		$particle->setAccessToken($options['particle_token']);
+		if($particle->getAttributes($options['particle_device_id']) == true)
+		{
+			$status = $particle->getResult();
+			$status['error'] = "None";
+		} else {
+				$status['connected'] = '';
+				$status['error'] = $particle->getError();
+		}
+	} else {
+		$status['connected'] = '';
+	}
+	update_option('particle_status', $status);
+}
+
+/**function particle_show_status (  ) {
+	$options = get_option( 'particle_settings' );
+	$status =
+	$particle = new phpParticle();
+	$particle->setDebug(false);
+	$particle->setAccessToken($options['particle_token']);
+	if($particle->getAttributes($options['particle_device_id']) == true)
+	{
+	    $status = $particle->getResult();
+			set_op
+			?>
+			<?php
+			print_r($data);
+	}
+	else
+	{
+	    echo("Error: " . $particle->getError());
+	    echo("Error Source" . $particle->getErrorSource());
+	}
+} **/
 
 ?>
