@@ -12,3 +12,7 @@ Currently the shortcodes are only executed when loading a page, so it falls shor
 3. go to [Particle Console](http://console.particle.io) and find your device ID.
 4. Go to the WordPress Admin pages, navigate to "Particle" and enter your Particle ID and token, and enable the device.
 After this you should see a list of cloud variables and functions of your Particle. Next to them you will see the minimal Shortcodes to use them.
+### Usage
+Minimal usage is as shown in the admin pages. Shortcodes always start with "particle" followed by a number of parameters.
+#### variables
+For calling variables, you simply have to enter the variable name. So if you have cloud variable "ledStatus" in particle, you can call it as follows: `[particle variable='ledstatus']`
