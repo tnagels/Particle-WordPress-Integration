@@ -27,7 +27,7 @@ There are two options for the shortcode:
 * result: this overrides any output from the shortcode. Typically this is used when you do not want to show the result, as follows: `[particle function='toggleLed' value='go' result='']`.
 ## Plugin status
 As said the plugin is only a minimal implementation. Ideally, the functionality is also exposed over the WordPress API so it can be called from JavaScript. If I will implement this is anyone's guess (including me).
-[x] Particle communication
-[x] Shortcode implementation
-[ ] WordPress API implementation
-[ ] Particle authentication  mechanisms
+- [x] Particle communication
+- [x] Shortcode implementation
+- [ ] WordPress API implementation
+- [ ] Particle authentication  mechanisms
