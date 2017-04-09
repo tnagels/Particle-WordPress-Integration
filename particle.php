@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Particle Integration
-Plugin URI: http://www.thomasnagels.be/wp-particle
+Plugin URI: http://thomasnagels.be/particle-wordpress-integration/
 Description: Integration of Particle Variables and Functions in WordPress
 Version: The Plugin's Version Number, e.g.: 1.0
 Author: Thomas Nagels
-Author URI: http://www.thomasnagels.be
+Author URI: http://thomasnagels.be
 License: GPLv2 or later
 */
 

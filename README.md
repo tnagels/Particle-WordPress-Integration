@@ -1,5 +1,5 @@
 # Particle-WordPress Integration
-This is a plugin for [WordPress](http://wordpress.org) providing [Particle Could API](http://particle.io) integration.
+This is a plugin for [WordPress](http://wordpress.org) providing [Particle Could API](http://particle.io) integration. It was created by [Thomas Nagels](https://thomasnagels.be), more infor also here: [http://thomasnagels.be/particle-wordpress-integration/](http://thomasnagels.be/particle-wordpress-integration/).
 ## History
 After getting to know Particle during my work at [Rombit](http://www.rombit.be), this plugin was created as a way to experiment with Particle from within my own blog. It started out as a simple idea for a coffee-counter (I drink too much of the stuff) and once I started, I wanted to create a full plugin.
 ## Functionality
