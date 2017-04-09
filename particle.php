@@ -25,7 +25,8 @@ function particle_add_admin_menu(  ) {
 
 }
 
-function particle_shortcode( $params ) {
+function particle_action( $params ) {
+	$return_value = null;
 	global $allowed_status;
 	particle_update_status ();
 	$status = get_option( 'particle_status');
@@ -33,23 +34,45 @@ function particle_shortcode( $params ) {
 	if (array_key_exists ('status', $params )) {
 		if (array_key_exists ($params['status'], $status)) {
 			if (in_array($params['status'], $allowed_status)){
-				return $status[$params['status']];
+				$return_value = $status[$params['status']];
 			}
-			return '(status not allowed)';
+			$return_value = '(status not allowed)';
 		}
-		return '(unknown status)';
+		$return_value = '(unknown status)';
 	}
 
-	if (array_key_exists ('variable', $params )) {
+	elseif (array_key_exists ('function', $params )) {
+		if (in_array ($params['function'], $status['functions'])) {
+			if (array_key_exists ('value', $params )) {
+				$return_value =  particle_call_function($params['function'], $params['value']);
+			}
+			$return_value =  '(function not allowed)';
+		}
+		$return_value =  '(unknown function)';
+	}
+
+	elseif (array_key_exists ('setup', $params )) {
+		if ($params['setup'] == 'signal') {
+			$return_value =  particle_signal();
+		}
+		$return_value =  '(unknown setup task)';
+	}
+
+	elseif (array_key_exists ('variable', $params )) {
 		if (array_key_exists ($params['variable'], $status['variables'])) {
-			return $status['variables'][$params['variable']];
+			$return_value =  $status['variables'][$params['variable']];
 		}
-		return '(unknown variable)';
+		$return_value =  '(unknown variable)';
 	}
 
-  return '(unknown parameter)';
+	else {
+		$return_value = '(unknown parameter)';
+	}
+		
+  return $return_value;
 }
-add_shortcode( 'particle', 'particle_shortcode' );
+
+add_shortcode( 'particle', 'particle_action' );
 
 
 function particle_settings_init(  ) {
@@ -279,8 +302,8 @@ function particle_update_status () {
 	}
 	update_option('particle_status', $status);
 }
-/*
-particle_call_function ($function, $value) {
+
+function particle_call_function ($function, $value) {
 	$options = get_option( 'particle_settings' );
 	$status = get_option( 'particle_status');
 	if ($options['particle_enable'] == '1') {
@@ -289,12 +312,31 @@ particle_call_function ($function, $value) {
 		$particle->setAccessToken($options['particle_token']);
 		if($particle->callFunction($options['particle_device_id'], $function, $value) == true) {
 			$result = $particle->getResult();
-			return $result;
+			return $result['return_value'];
 		}
 		else
 		{
 			$status['error'] = $particle->getError();
+			return null;
 		}
 	}
-}*/
+}
+function particle_signal () {
+	$options = get_option( 'particle_settings' );
+	$status = get_option( 'particle_status');
+	if ($options['particle_enable'] == '1') {
+		$particle = new phpParticle();
+		$particle->setDebug(false);
+		$particle->setAccessToken($options['particle_token']);
+		if($particle->signalDevice($options['particle_device_id'],1) == true) {
+			$result = $particle->getResult();
+			return 'shouthing rainbows';
+		}
+		else
+		{
+			$status['error'] = $particle->getError();
+			return '(signalling error)';
+		}
+	}
+}
 ?>
