@@ -14,5 +14,13 @@ Currently the shortcodes are only executed when loading a page, so it falls shor
 After this you should see a list of cloud variables and functions of your Particle. Next to them you will see the minimal Shortcodes to use them.
 ### Usage
 Minimal usage is as shown in the admin pages. Shortcodes always start with "particle" followed by a number of parameters.
-#### variables
-For calling variables, you simply have to enter the variable name. So if you have cloud variable "ledStatus" in particle, you can call it as follows: `[particle variable='ledstatus']`
+#### Status
+A number of status messages are available as a shortcode. These are listed in the admin interface. For example, if you want to retrieve your device's name, you enter following shortcode: `[particle status='name']`.
+#### Variables
+For calling variables, you simply have to enter the variable name. So if you have cloud variable "ledStatus" in particle, you can call it as follows: `[particle variable='ledstatus']`.
+#### Functions
+If you want to call a cloud function, you need to pass two parameters, the function name and the value you want to pass. The shortcode (by default) displays the function's result. Example `[particle function='toggleLed' value='go']`
+#### Options
+There are two options for the shortcode:
+* default: this is the information given when there is an error in the communication with the Particle device, for example when it is not online. This could be used for a variable `ledStatus` as follows `[particle variable='ledstatus' default='not connected']`.
+* result: this overrides any output from the shortcode. Typically this is used when you do not want to show the result, as follows: `[particle function='toggleLed' value='go' result='']`
