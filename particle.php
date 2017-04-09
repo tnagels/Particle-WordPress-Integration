@@ -27,6 +27,7 @@ function particle_add_admin_menu(  ) {
 
 function particle_action( $params ) {
 	$return_value = null;
+	$error_value = null;
 	global $allowed_status;
 	particle_update_status ();
 	$status = get_option( 'particle_status');
@@ -36,9 +37,9 @@ function particle_action( $params ) {
 			if (in_array($params['status'], $allowed_status)){
 				$return_value = $status[$params['status']];
 			}
-			$return_value = '(status not allowed)';
+			else $error_value = '(status not allowed)';
 		}
-		$return_value = '(unknown status)';
+		else $error_value = '(unknown status)';
 	}
 
 	elseif (array_key_exists ('function', $params )) {
@@ -46,30 +47,40 @@ function particle_action( $params ) {
 			if (array_key_exists ('value', $params )) {
 				$return_value =  particle_call_function($params['function'], $params['value']);
 			}
-			$return_value =  '(function not allowed)';
+			else $error_value =  '(function not allowed)';
 		}
-		$return_value =  '(unknown function)';
+		else $error_value =  '(unknown function)';
 	}
 
 	elseif (array_key_exists ('setup', $params )) {
 		if ($params['setup'] == 'signal') {
 			$return_value =  particle_signal();
 		}
-		$return_value =  '(unknown setup task)';
+		else $error_value =  '(unknown setup task)';
 	}
 
 	elseif (array_key_exists ('variable', $params )) {
 		if (array_key_exists ($params['variable'], $status['variables'])) {
 			$return_value =  $status['variables'][$params['variable']];
 		}
-		$return_value =  '(unknown variable)';
+		else $error_value =  '(unknown variable)';
 	}
 
-	else {
-		$return_value = '(unknown parameter)';
+	else $error_value = '(unknown parameter)';
+	if (!empty($error_value))
+	{
+		if (array_key_exists ('default', $params )) {
+			return $params['default'];
+		}
+		else return $error_value;
 	}
-		
-  return $return_value;
+	else {
+		if (array_key_exists ('result', $params )) {
+			return $params['result'];
+		}
+		else return $return_value;
+	}
+	return '(you should never see this)';
 }
 
 add_shortcode( 'particle', 'particle_action' );
