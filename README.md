@@ -1,11 +1,12 @@
 # Particle-WordPress Integration
-This is a plugin for [WordPress](http://wordpress.org) providing [Particle](http://particle.io) integration.
+This is a plugin for [WordPress](http://wordpress.org) providing [Particle Could API](http://particle.io) integration.
 ## History
 After getting to know Particle during my work at [Rombit](http://www.rombit.be), this plugin was created as a way to experiment with Particle from within my own blog. It started out as a simple idea for a coffee-counter (I drink too much of the stuff) and once I started, I wanted to create a full plugin.
 ## Functionality
 In its current form the plugin adds shortcode functionality for Particle to your WordPress blog. By embedding a shortcode, you can include variables & call functions from one particle device in your blog. In this way you could link the real world with this information on your site.
 Currently the shortcodes are only executed when loading a page, so it falls short of full interactivity. But the idea is there, so consider this a proof-of-concept.
 ## How to use
+*Please note that this implementation of the Particle Cloud API uses the default token for a user. This is only usable for proof-of-concepts. For full production implementation other mechanisms should be used.*
 ### Installation
 1. Install the plugin in your WordPress plugin folder as usual.
 2. Go to [Particle Build](http://build.particle.io) and find your token.
@@ -23,4 +24,10 @@ If you want to call a cloud function, you need to pass two parameters, the funct
 #### Options
 There are two options for the shortcode:
 * default: this is the information given when there is an error in the communication with the Particle device, for example when it is not online. This could be used for a variable `ledStatus` as follows `[particle variable='ledstatus' default='not connected']`.
-* result: this overrides any output from the shortcode. Typically this is used when you do not want to show the result, as follows: `[particle function='toggleLed' value='go' result='']`
+* result: this overrides any output from the shortcode. Typically this is used when you do not want to show the result, as follows: `[particle function='toggleLed' value='go' result='']`.
+## Plugin status
+As said the plugin is only a minimal implementation. Ideally, the functionality is also exposed over the WordPress API so it can be called from JavaScript. If I will implement this is anyone's guess (including me).
+[x] Particle communication
+[x] Shortcode implementation
+[ ] WordPress API implementation
+[ ] Particle authentication  mechanisms
