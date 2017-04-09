@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Particle Integration
-Plugin URI: http://www.thomasnagels.be
+Plugin URI: http://www.thomasnagels.be/wp-particle
 Description: Integration of Particle Variables and Functions in WordPress
 Version: The Plugin's Version Number, e.g.: 1.0
 Author: Thomas Nagels
 Author URI: http://www.thomasnagels.be
-License: Commercial
+License: GPLv2 or later
 */
 
 // Admin Menu & Page
@@ -323,7 +323,7 @@ function particle_call_function ($function, $value) {
 		$particle->setAccessToken($options['particle_token']);
 		if($particle->callFunction($options['particle_device_id'], $function, $value) == true) {
 			$result = $particle->getResult();
-			return $result['return_value'];
+			return sanitize_text_field($result['return_value']);
 		}
 		else
 		{
