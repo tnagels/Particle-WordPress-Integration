@@ -5,6 +5,8 @@ After getting to know Particle during my work at [Rombit](http://www.rombit.be),
 ## Functionality
 In its current form the plugin adds shortcode functionality for Particle to your WordPress blog. By embedding a shortcode, you can include variables & call functions from one particle device in your blog. In this way you could link the real world with this information on your site.
 Currently the shortcodes are only executed when loading a page, so it falls short of full interactivity. But the idea is there, so consider this a proof-of-concept.
+## Credits
+This code relies heavily on the [Particle PHP library](https://github.com/harrisonhjones/phpParticle) as written by Harrison Jones.
 ## How to use
 *Please note that this implementation of the Particle Cloud API uses the default token for a user. This is only usable for proof-of-concepts. For full production implementation other mechanisms should be used.*
 ### Installation
