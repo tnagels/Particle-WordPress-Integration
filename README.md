@@ -4,7 +4,8 @@ This is a plugin for [WordPress](http://wordpress.org) providing [Particle Could
 After getting to know Particle during my work at [Rombit](http://www.rombit.be), this plugin was created as a way to experiment with Particle from within my own blog. It started out as a simple idea for a coffee-counter (I drink too much of the stuff) and once I started, I wanted to create a full plugin.
 ## Functionality
 In its current form the plugin adds shortcode functionality for Particle to your WordPress blog. By embedding a shortcode, you can include variables & call functions from one particle device in your blog. In this way you could link the real world with this information on your site.
-Currently the shortcodes are only executed when loading a page, so it falls short of full interactivity. But the idea is there, so consider this a proof-of-concept.
+
+Currently the shortcodes are only executed when loading a page, so it falls short of full interactivity. WordPress actually would support this quite well, but I did not see the need to implement this. The idea is there, so consider this a proof-of-concept.
 ## Credits
 This code relies heavily on the [Particle PHP library](https://github.com/harrisonhjones/phpParticle) as written by Harrison Jones.
 ## How to use
