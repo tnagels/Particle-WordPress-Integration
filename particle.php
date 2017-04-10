@@ -3,7 +3,7 @@
 Plugin Name: Particle Integration
 Plugin URI: http://thomasnagels.be/particle-wordpress-integration/
 Description: Integration of Particle Variables and Functions in WordPress
-Version: The Plugin's Version Number, e.g.: 1.0
+Version: 1.0
 Author: Thomas Nagels
 Author URI: http://thomasnagels.be
 License: GPLv2 or later
